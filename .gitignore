@@ -54,3 +54,13 @@ logs/
 !/data/uploads/.gitkeep
 /data/imports/*
 !/data/imports/.gitkeep
+
+# App specifc design files
+EDAMA - Design Files/
+
+# Next.js
+node_modules/
+.next/
+frontend/.env*
+next-env.d.ts
+EDAMA - Design Files/
