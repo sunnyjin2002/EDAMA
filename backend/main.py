@@ -18,11 +18,13 @@ from backend.api.schemas import DashboardResponse, HealthResponse, JobSummary
 from backend.core.config import get_settings
 from backend.core.logging import configure_logging
 from backend.core.scheduler import create_scheduler
-from backend.db.session import create_database_tables, get_db
+from backend.db.session import SessionLocal, create_database_tables, get_db
 from backend.modules.translator.services.job_service import JobService
+from backend.modules.translator.services.glossary_service import GlossaryService
 
 settings = get_settings()
 job_service = JobService()
+glossary_service = GlossaryService()
 
 
 @asynccontextmanager
@@ -30,6 +32,11 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     """Configure process-level resources for the application lifetime."""
     configure_logging(settings.log_level)
     create_database_tables()
+
+    # Load glossary CSV files at startup
+    with SessionLocal() as db:
+        glossary_service.reload_glossary_from_files(db)
+
     scheduler = create_scheduler(settings)
     app.state.scheduler = scheduler
     scheduler.start(paused=True)
@@ -71,6 +78,18 @@ def create_app() -> FastAPI:
             app_name=settings.app_name,
             recent_jobs=[JobSummary.model_validate(j) for j in recent_jobs],
         )
+
+    @app.post("/glossary/reload", tags=["glossary"])
+    def reload_glossary(db: Annotated[Session, Depends(get_db)]) -> dict[str, object]:
+        """Reload all glossary CSV files from data/glossary/ into the database."""
+        summary = glossary_service.reload_glossary_from_files(db)
+        return {
+            "message": "Glossary reloaded",
+            "inserted": summary.inserted,
+            "updated": summary.updated,
+            "skipped": summary.skipped,
+            "errors": list(summary.errors),
+        }
 
     return app
 

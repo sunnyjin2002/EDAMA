@@ -43,6 +43,45 @@ class ImportSummary:
 class GlossaryService:
     """Manages glossary storage, import, and lookup."""
 
+    # ── filesystem reload ──────────────────────────────────────
+
+    def reload_glossary_from_files(
+        self, db: Session, glossary_dir: Path | None = None
+    ) -> ImportSummary:
+        """Reload all CSV files from the glossary directory into the database.
+
+        Only ``*.csv`` files are processed.  XLSX and other formats are
+        silently ignored.  Existing entries are updated by matching on
+        the normalized ``source_term_en`` column.
+        """
+        if glossary_dir is None:
+            glossary_dir = Path("data") / "glossary"
+
+        csv_paths = sorted(glossary_dir.glob("*.csv"))
+        if not csv_paths:
+            return ImportSummary(skipped=1, errors=("No CSV files found in glossary directory.",))
+
+        total_inserted = 0
+        total_updated = 0
+        total_skipped = 0
+        all_errors: list[str] = []
+
+        for path in csv_paths:
+            summary = self.import_csv_file(db, path)
+            total_inserted += summary.inserted
+            total_updated += summary.updated
+            total_skipped += summary.skipped
+            all_errors.extend(summary.errors)
+
+        return ImportSummary(
+            inserted=total_inserted,
+            updated=total_updated,
+            skipped=total_skipped,
+            errors=tuple(all_errors),
+        )
+
+    # ── CRUD ────────────────────────────────────────────────────
+
     def list_entries(self, db: Session, search: str | None = None) -> list[GlossaryEntry]:
         """Return glossary entries, optionally filtered by a simple text search."""
         statement = select(GlossaryEntry).order_by(GlossaryEntry.source_term_en.asc())
