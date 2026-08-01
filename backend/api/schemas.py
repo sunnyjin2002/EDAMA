@@ -173,3 +173,29 @@ class TranslationMemoryImportResponse(BaseModel):
 
 class HealthResponse(BaseModel):
     status: str
+
+
+# ── Settings ────────────────────────────────────────────────────────
+
+class SettingsResponse(BaseModel):
+    translation_provider: str
+    translation_model: str
+    review_provider: str
+    review_model: str
+    tagging_provider: str
+    tagging_model: str
+    source_poll_url: str | None
+    source_poll_interval_minutes: int
+    auto_publish_official_news: bool
+
+
+class SettingsUpdateRequest(BaseModel):
+    translation_provider: str | None = None
+    translation_model: str | None = None
+    review_provider: str | None = None
+    review_model: str | None = None
+    tagging_provider: str | None = None
+    tagging_model: str | None = None
+    source_poll_url: str | None = None
+    source_poll_interval_minutes: int | None = None
+    auto_publish_official_news: bool | None = None

@@ -20,6 +20,13 @@ class Settings(BaseSettings):
     gemini_api_key: str | None = None
     deepseek_api_key: str | None = None
 
+    translation_provider: str = "openai"
+    translation_model: str = "gpt-4o-mini"
+    review_provider: str = "openai"
+    review_model: str = "gpt-4o-mini"
+    tagging_provider: str = "openai"
+    tagging_model: str = "gpt-4o-mini"
+
     wiki_username: str | None = None
     wiki_password: str | None = None
 

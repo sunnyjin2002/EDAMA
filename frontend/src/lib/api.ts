@@ -96,7 +96,29 @@ export async function getArticle(id: number): Promise<ArticleDetail> {
 }
 
 export async function getSettings(): Promise<{ status: string }> {
-  return fetchJSON<{ status: string }>("/settings");
+  return fetchJSON<SettingsResponse>("/settings");
+}
+
+export interface SettingsResponse {
+  translation_provider: string;
+  translation_model: string;
+  review_provider: string;
+  review_model: string;
+  tagging_provider: string;
+  tagging_model: string;
+  source_poll_url: string | null;
+  source_poll_interval_minutes: number;
+  auto_publish_official_news: boolean;
+}
+
+export async function updateSettings(body: Partial<SettingsResponse>): Promise<SettingsResponse> {
+  const res = await fetch(`${API_BASE}/settings`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) throw new Error(`Settings update failed: ${res.status}`);
+  return res.json();
 }
 
 export async function reloadGlossary(): Promise<{ message: string; inserted: number; updated: number }> {

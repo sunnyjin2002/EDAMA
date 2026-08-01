@@ -25,6 +25,9 @@ Elite Dangerous universe through a RAG-powered chatbot.
 | Migrations | Alembic |
 | Scheduling | APScheduler |
 | Linting | ruff, black |
+| LLM Provider | openai (OpenAI SDK) |
+| Vector Store | chromadb |
+| Agent Framework | langgraph |
 
 ## Setup
 
