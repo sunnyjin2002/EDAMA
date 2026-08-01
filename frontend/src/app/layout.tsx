@@ -1,19 +1,18 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import Link from "next/link";
+import { NavDropdown } from "@/components/NavDropdown";
 
 export const metadata: Metadata = {
   title: "EDAMA",
   description: "Elite Dangerous Ask Me Anything",
 };
 
-const navLinks = [
-  { href: "/", label: "Dashboard" },
+const translatorItems = [
   { href: "/jobs", label: "Jobs" },
   { href: "/glossary", label: "Glossary" },
   { href: "/translation-memory", label: "Translation Memory" },
   { href: "/articles/manual/new", label: "Submit" },
-  { href: "/settings", label: "Settings" },
 ];
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -21,17 +20,36 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body suppressHydrationWarning>
         <nav className="bg-ed-panel border-b border-ed-border">
-          <div className="max-w-7xl mx-auto px-4 py-3 flex gap-6 items-center">
-            <Link href="/" className="text-ed-orange font-bold text-lg tracking-tight">
+          <div className="max-w-7xl mx-auto px-4 py-3 flex gap-1 items-center">
+            <Link
+              href="/"
+              className="text-ed-orange font-bold text-lg tracking-tight mr-4"
+            >
               EDAMA
             </Link>
-            <div className="flex gap-4 text-sm text-gray-400">
-              {navLinks.map((link) => (
-                <Link key={link.href} href={link.href} className="hover:text-white transition-colors">
-                  {link.label}
-                </Link>
-              ))}
-            </div>
+            <Link
+              href="/"
+              className="px-3 py-2 rounded text-sm text-gray-400 hover:text-white transition-colors"
+            >
+              Chat
+            </Link>
+            <NavDropdown
+              href="/translator"
+              label="ED Translator"
+              items={translatorItems}
+            />
+            <Link
+              href="/tools"
+              className="px-3 py-2 rounded text-sm text-gray-400 hover:text-white transition-colors"
+            >
+              Tools and Guides
+            </Link>
+            <Link
+              href="/settings"
+              className="px-3 py-2 rounded text-sm text-gray-400 hover:text-white transition-colors"
+            >
+              Settings
+            </Link>
           </div>
         </nav>
         <main className="max-w-7xl mx-auto px-4 py-6">{children}</main>

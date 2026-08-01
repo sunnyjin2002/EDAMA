@@ -51,12 +51,12 @@ Edit .env with your provider API keys, wiki credentials, and SMTP settings.
 Start both services in separate terminals:
 
 ```
-# Terminal 1 - backend (port 3312)
-uvicorn backend.main:app --port 3312
-
-# Terminal 2 - frontend (port 3302)
+# Terminal 1 - frontend (port 3302)
 cd frontend
 npm run dev
+
+# Terminal 2 - backend (port 3312)
+uvicorn backend.main:app --port 3312
 ```
 
 Open http://localhost:3302
