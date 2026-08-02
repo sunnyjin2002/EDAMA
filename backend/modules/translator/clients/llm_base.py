@@ -62,4 +62,12 @@ def create_client(provider: str, api_key: str | None) -> LLMClient:
 
         return GeminiClient(api_key=api_key or "")
 
+    if provider == "qwen":
+        from backend.modules.translator.clients.qwen_client import QwenClient
+        return QwenClient(api_key=api_key or "")
+
+    if provider == "anthropic":
+        from backend.modules.translator.clients.anthropic_client import AnthropicClient
+        return AnthropicClient(api_key=api_key or "")
+
     raise ValueError(f"Unknown LLM provider: {provider}")

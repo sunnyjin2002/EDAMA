@@ -1,5 +1,6 @@
 """EDAMA REST API entrypoint."""
 
+import asyncio
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 from typing import Annotated
@@ -21,10 +22,12 @@ from backend.core.scheduler import create_scheduler
 from backend.db.session import SessionLocal, create_database_tables, get_db
 from backend.modules.translator.services.job_service import JobService
 from backend.modules.translator.services.glossary_service import GlossaryService
+from backend.modules.translator.services.background_processor import BackgroundProcessor
 
 settings = get_settings()
 job_service = JobService()
 glossary_service = GlossaryService()
+background_processor = BackgroundProcessor()
 
 
 @asynccontextmanager
@@ -40,9 +43,17 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     scheduler = create_scheduler(settings)
     app.state.scheduler = scheduler
     scheduler.start(paused=True)
+    # Start background job processor (picks up queued/failed jobs)
+    bg_task = asyncio.create_task(background_processor.run_loop())
     try:
         yield
     finally:
+        background_processor.stop()
+        bg_task.cancel()
+        try:
+            await bg_task
+        except asyncio.CancelledError:
+            pass
         scheduler.shutdown(wait=False)
 
 

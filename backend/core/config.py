@@ -19,13 +19,19 @@ class Settings(BaseSettings):
     openai_api_key: str | None = None
     gemini_api_key: str | None = None
     deepseek_api_key: str | None = None
+    qwen_api_key: str | None = None
+    anthropic_api_key: str | None = None
 
     translation_provider: str = "openai"
-    translation_model: str = "gpt-4o-mini"
+    translation_model: str = "deepseek-v4-flash"
     review_provider: str = "openai"
     review_model: str = "gpt-4o-mini"
     tagging_provider: str = "openai"
     tagging_model: str = "gpt-4o-mini"
+
+    translation_review_enabled: bool = True
+    translation_timeout_seconds: int = 120
+    translation_max_retries: int = 3
 
     wiki_username: str | None = None
     wiki_password: str | None = None

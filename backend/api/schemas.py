@@ -59,6 +59,12 @@ class JobDetail(BaseModel):
     finished_at: datetime | None
     article: ArticleSummary | None = None
     logs: list[JobLogEntry] = []
+    translated_title: str | None = None
+    translated_body: str | None = None
+    reviewed_title: str | None = None
+    reviewed_body: str | None = None
+    review_notes: str | None = None
+    confidence_score: float | None = None
 
 
 class ArticleDetail(BaseModel):
@@ -184,6 +190,7 @@ class SettingsResponse(BaseModel):
     review_model: str
     tagging_provider: str
     tagging_model: str
+    translation_review_enabled: bool
     source_poll_url: str | None
     source_poll_interval_minutes: int
     auto_publish_official_news: bool
@@ -196,6 +203,7 @@ class SettingsUpdateRequest(BaseModel):
     review_model: str | None = None
     tagging_provider: str | None = None
     tagging_model: str | None = None
+    translation_review_enabled: bool | None = None
     source_poll_url: str | None = None
     source_poll_interval_minutes: int | None = None
     auto_publish_official_news: bool | None = None

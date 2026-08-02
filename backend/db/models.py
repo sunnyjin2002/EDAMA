@@ -141,6 +141,7 @@ class Job(Base):
     status: Mapped[JobStatus] = mapped_column(job_status_enum, default=JobStatus.pending)
     target_language: Mapped[str] = mapped_column(String(16), default="zh-CN")
     error_message: Mapped[str | None] = mapped_column(Text)
+    retry_count: Mapped[int] = mapped_column(Integer, default=0)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=utc_now)
     started_at: Mapped[datetime | None] = mapped_column(DateTime)
     finished_at: Mapped[datetime | None] = mapped_column(DateTime)

@@ -3,7 +3,20 @@
 import { getSettings, updateSettings, type SettingsResponse } from "@/lib/api";
 import { useEffect, useState } from "react";
 
-const PROVIDERS = ["openai", "deepseek", "gemini"];
+const PROVIDERS = ["openai", "deepseek", "gemini", "qwen", "anthropic"] as const;
+
+const PROVIDER_MODELS: Record<string, string[]> = {
+  openai: ["gpt-4o-mini", "gpt-4o", "gpt-4.1"],
+  deepseek: ["deepseek-chat", "deepseek-reasoner"],
+  deepseek: ["deepseek-v4-flash", "deepseek-v4-pro"],
+  gemini: ["gemini-2.5-flash", "gemini-2.5-pro"],
+  qwen: ["qwen-max", "qwen-plus", "qwen-turbo"],
+  anthropic: ["claude-3.5-sonnet", "claude-3.5-haiku", "claude-4-sonnet"],
+};
+
+function getModels(provider: string): string[] {
+  return PROVIDER_MODELS[provider] ?? [];
+}
 
 interface SelectFieldProps {
   label: string;
@@ -25,28 +38,6 @@ function SelectField({ label, value, options, onChange }: SelectFieldProps) {
           <option key={opt} value={opt}>{opt}</option>
         ))}
       </select>
-    </div>
-  );
-}
-
-interface InputFieldProps {
-  label: string;
-  value: string;
-  onChange: (v: string) => void;
-  placeholder?: string;
-}
-
-function InputField({ label, value, onChange, placeholder }: InputFieldProps) {
-  return (
-    <div>
-      <label className="block text-sm text-gray-400 mb-1">{label}</label>
-      <input
-        type="text"
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder={placeholder}
-        className="w-full px-3 py-2 bg-ed-panel border border-ed-border rounded text-white text-sm focus:outline-none focus:border-ed-orange"
-      />
     </div>
   );
 }
@@ -89,20 +80,37 @@ export default function SettingsPage() {
           <h2 className="text-sm font-semibold text-gray-400 uppercase mb-3">LLM Providers</h2>
           <div className="grid grid-cols-2 gap-4">
             <SelectField label="Translation Provider" value={settings.translation_provider} options={PROVIDERS} onChange={(v) => set("translation_provider", v)} />
-            <InputField label="Translation Model" value={settings.translation_model} onChange={(v) => set("translation_model", v)} placeholder="gpt-4o-mini" />
+            <SelectField label="Translation Model" value={settings.translation_model} options={getModels(settings.translation_provider)} onChange={(v) => set("translation_model", v)} />
             <SelectField label="Review Provider" value={settings.review_provider} options={PROVIDERS} onChange={(v) => set("review_provider", v)} />
-            <InputField label="Review Model" value={settings.review_model} onChange={(v) => set("review_model", v)} placeholder="gpt-4o-mini" />
+            <SelectField label="Review Model" value={settings.review_model} options={getModels(settings.review_provider)} onChange={(v) => set("review_model", v)} />
             <SelectField label="Tagging Provider" value={settings.tagging_provider} options={PROVIDERS} onChange={(v) => set("tagging_provider", v)} />
-            <InputField label="Tagging Model" value={settings.tagging_model} onChange={(v) => set("tagging_model", v)} placeholder="gpt-4o-mini" />
+            <SelectField label="Tagging Model" value={settings.tagging_model} options={getModels(settings.tagging_provider)} onChange={(v) => set("tagging_model", v)} />
           </div>
         </section>
 
         {/* Polling */}
+        {/* Polling section — bring back InputField inline since it was removed */}
         <section className="bg-ed-panel border border-ed-border rounded-lg p-4">
           <h2 className="text-sm font-semibold text-gray-400 uppercase mb-3">Source Polling</h2>
           <div className="grid grid-cols-2 gap-4">
-            <InputField label="Source Poll URL" value={settings.source_poll_url ?? ""} onChange={(v) => set("source_poll_url", v || null as unknown as string)} />
-            <InputField label="Poll Interval (minutes)" value={String(settings.source_poll_interval_minutes)} onChange={(v) => set("source_poll_interval_minutes", Number(v) || 30)} />
+            <div>
+              <label className="block text-sm text-gray-400 mb-1">Source Poll URL</label>
+              <input
+                type="text"
+                value={settings.source_poll_url ?? ""}
+                onChange={(e) => set("source_poll_url", e.target.value || null as unknown as string)}
+                className="w-full px-3 py-2 bg-ed-panel border border-ed-border rounded text-white text-sm focus:outline-none focus:border-ed-orange"
+              />
+            </div>
+            <div>
+              <label className="block text-sm text-gray-400 mb-1">Poll Interval (minutes)</label>
+              <input
+                type="text"
+                value={String(settings.source_poll_interval_minutes)}
+                onChange={(e) => set("source_poll_interval_minutes", Number(e.target.value) || 30)}
+                className="w-full px-3 py-2 bg-ed-panel border border-ed-border rounded text-white text-sm focus:outline-none focus:border-ed-orange"
+              />
+            </div>
           </div>
           <div className="mt-3">
             <label className="flex items-center gap-2 text-sm text-gray-400">
@@ -115,6 +123,20 @@ export default function SettingsPage() {
               Auto-publish official news
             </label>
           </div>
+        </section>
+
+        {/* Translator */}
+        <section className="bg-ed-panel border border-ed-border rounded-lg p-4">
+          <h2 className="text-sm font-semibold text-gray-400 uppercase mb-3">Translator</h2>
+          <label className="flex items-center gap-2 text-sm text-gray-400">
+            <input
+              type="checkbox"
+              checked={settings.translation_review_enabled}
+              onChange={(e) => set("translation_review_enabled", e.target.checked)}
+              className="rounded bg-ed-panel border-ed-border"
+            />
+            LLM Translation Review Service
+          </label>
         </section>
 
         <div className="flex items-center gap-3">

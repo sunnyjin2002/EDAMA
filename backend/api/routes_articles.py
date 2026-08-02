@@ -56,10 +56,11 @@ def submit_manual_article(
         )
 
     result = ingestion_service.submit_manual_article(db, submission)
+
     return ManualSubmissionResponse(
         article=ArticleSummary.model_validate(result.article),
         job=JobSummary.model_validate(result.job),
-        message=f"Article created. Job #{result.job.id} queued for translation.",
+        message=f"Article created. Job #{result.job.id} queued and will translate automatically.",
     )
 
 

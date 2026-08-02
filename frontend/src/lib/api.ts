@@ -21,6 +21,12 @@ export interface JobSummary {
 
 export interface JobDetail extends JobSummary {
   logs: { id: number; stage: string; message: string; created_at: string }[];
+  translated_title: string | null;
+  translated_body: string | null;
+  reviewed_title: string | null;
+  reviewed_body: string | null;
+  review_notes: string | null;
+  confidence_score: number | null;
 }
 
 export interface DashboardResponse {
@@ -81,6 +87,12 @@ export async function getJob(id: number): Promise<JobDetail> {
   return fetchJSON<JobDetail>(`/jobs/${id}`);
 }
 
+export async function translateJob(id: number): Promise<JobDetail> {
+  const res = await fetch(`${API_BASE}/jobs/${id}/translate`, { method: "POST" });
+  if (!res.ok) throw new Error(`Translate failed: ${res.status}`);
+  return res.json();
+}
+
 export async function getGlossary(query?: string): Promise<GlossaryListResponse> {
   const qs = query ? `?q=${encodeURIComponent(query)}` : "";
   return fetchJSON<GlossaryListResponse>(`/glossary${qs}`);
@@ -105,8 +117,9 @@ export interface SettingsResponse {
   review_provider: string;
   review_model: string;
   tagging_provider: string;
-  tagging_model: string;
-  source_poll_url: string | null;
+    tagging_model: string;
+    translation_review_enabled: boolean;
+    source_poll_url: string | null;
   source_poll_interval_minutes: number;
   auto_publish_official_news: boolean;
 }

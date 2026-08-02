@@ -48,7 +48,11 @@ class JobService:
         statement = (
             select(Job)
             .where(Job.id == job_id)
-            .options(selectinload(Job.article), selectinload(Job.logs))
+            .options(
+                selectinload(Job.article),
+                selectinload(Job.logs),
+                selectinload(Job.translations),
+            )
         )
         return db.scalar(statement)
 
