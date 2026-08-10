@@ -65,6 +65,7 @@ class JobDetail(BaseModel):
     reviewed_body: str | None = None
     review_notes: str | None = None
     confidence_score: float | None = None
+    tags: list[str] = []
 
 
 class ArticleDetail(BaseModel):

@@ -1,4 +1,4 @@
-# EDAMA — Elite Dangerous AMA
+# EDAMA — Elite:Dangerous Ask Me Anything
 
 Elite Dangerous lore translation and knowledge system.
 Translate Galnet articles from EN to CN, manage terminology

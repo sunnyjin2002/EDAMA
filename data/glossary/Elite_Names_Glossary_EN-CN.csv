@@ -129,23 +129,23 @@ Turner Research Group,Vocab,特纳研究集团,3309/2/2,JHLSunny,联盟在California Nebu
 Alliance Assembly,Vocab,联盟议会,,,Counciller译为委员,Alliance,,Organization
 Alliance Interpol,Vocab,联盟星际刑警组织,3309/3/7,ImperiusKang,,Alliance,,Organization
 Empire,Vocab,帝国,,,,Empire,,
-Summerland System,System Name,夏地星系,3308/2/24,ImperiusKang,,Empire,,Star System
+Summerland System,System Name,夏地星系,3308/2/24,ImperiusKang,,Empire,,
 Lords of Restoration,Vocab,复元贵族,3308/2/24,ImperiusKang,,Empire,,Organization
 Darkwater Inc,Vocab,黑水公司,3308/2/24,ImperiusKang,Note: The CG of 3308/2/24 has destroyed this organization. We will not see it again.,Empire,,Organization
 Omega Grid,Vocab,欧米伽网格,3308/2/24,ImperiusKang,,Empire,,Organization
 The Praotorian Vigil,Vocab,警卫军守夜,3308/2/24,ImperiusKang,,Empire,,Organization
-Empress,Vocab,皇帝,3308/3/11,Pradur241,,Empire,,Human;Member of Duval Family
-Arissa Lavigny-Duval,Human Name,阿里萨·拉维尼-杜瓦尔,3308/2/24,Pradur241,,Empire,,Human;Member of Duval Family
-Aisling Duval,Human Name,爱丝琳·杜瓦尔,3308/3/11,Pradur241,,Empire,,Human;Member of Duval Family
-Duval,Human Name,杜瓦尔,3308/3/11,Pradur241,,Empire,,Human;Member of Duval Family
-Emperor Hesketh,Human Name,赫斯基皇帝,3308/3/11,Pradur241,,Empire,,Human;Member of Duval Family
-Hadrian Duval,Human Name,哈德里昂·杜瓦尔,3308/3/11,Pradur241,,Empire,,Human;Member of Duval Family
-Hector Duval,Human Name,赫克托·杜瓦尔,3308/3/11,Pradur241,,Empire,,Human;Member of Duval Family
-Prince Herold,Human Name,哈罗德王子,3308/3/11,Pradur241,,Empire,,Human;Member of Duval Family
-(Admiral) Lucius Lavigny,Human Name,海军上将卢修斯·拉维尼,3308/3/11,Pradur241,,Empire,,Human;Member of Duval Family
-(Countess) Guinevere Lavigny,Human Name,伯爵夫人桂尼维尔·拉维尼,3308/3/11,Pradur241,,Empire,,Human;Member of Duval Family
-Lucretia Roche-Duval,Human Name,卢克丽西亚·罗奇-杜瓦尔,3308/3/11,Pradur241,,Empire,,Human;Member of Duval Family
-(Archduke) Otto Lombardo-Duval,Human Name,奥托·伦巴多-杜瓦尔,3308/3/11,Pradur241,,Empire,,Human;Member of Duval Family
+Empress,Vocab,皇帝,3308/3/11,Pradur241,,Empire,,Human;Member-of-Duval-Family
+Arissa Lavigny-Duval,Human Name,阿里萨·拉维尼-杜瓦尔,3308/2/24,Pradur241,,Empire,,Human;Member-of-Duval-Family
+Aisling Duval,Human Name,爱丝琳·杜瓦尔,3308/3/11,Pradur241,,Empire,,Human;Member-of-Duval-Family
+Duval,Human Name,杜瓦尔,3308/3/11,Pradur241,,Empire,,Human;Member-of-Duval-Family
+Emperor Hesketh,Human Name,赫斯基皇帝,3308/3/11,Pradur241,,Empire,,Human;Member-of-Duval-Family
+Hadrian Duval,Human Name,哈德里昂·杜瓦尔,3308/3/11,Pradur241,,Empire,,Human;Member-of-Duval-Family
+Hector Duval,Human Name,赫克托·杜瓦尔,3308/3/11,Pradur241,,Empire,,Human;Member-of-Duval-Family
+Prince Herold,Human Name,哈罗德王子,3308/3/11,Pradur241,,Empire,,Human;Member-of-Duval-Family
+(Admiral) Lucius Lavigny,Human Name,海军上将卢修斯·拉维尼,3308/3/11,Pradur241,,Empire,,Human;Member-of-Duval-Family
+(Countess) Guinevere Lavigny,Human Name,伯爵夫人桂尼维尔·拉维尼,3308/3/11,Pradur241,,Empire,,Human;Member-of-Duval-Family
+Lucretia Roche-Duval,Human Name,卢克丽西亚·罗奇-杜瓦尔,3308/3/11,Pradur241,,Empire,,Human;Member-of-Duval-Family
+(Archduke) Otto Lombardo-Duval,Human Name,奥托·伦巴多-杜瓦尔,3308/3/11,Pradur241,,Empire,,Human;Member-of-Duval-Family
 Marlinism,Vocab,马琳主义,,,,,,Marlinism
 Neo-Marlinism,Vocab,新马琳主义,,,,,,Marlinism
 Marlinist Colonies,Vocab,马琳殖民地,,,,,,Marlinism
@@ -173,21 +173,22 @@ Li Chyou Winds,MegaShip_Name,李奇欧风暴,3308/4/13,ImperiusKang,,,,Megaship
 Starport,MegaShip_Name,星港,,,,,,Starport
 Henry O'Hare's Hanger,Starport_Name,亨利·奥黑尔的机库,3308/2/24,ImperiusKang,,,,Starport
 Davies High,Starport_Name,戴维斯高,,,,,,Starport
-Outfitting,Vocab,舾装,3308/3/3,AloneKnight,,,,Starport Service
-Ship Yard,Vocab,造船厂,3308/3/3,AloneKnight,,,,Starport Service
-Tech Broker,Vocab,技术经纪人,3308/3/3,AloneKnight,,,,Starport Service
-Promium Relay,Vocab,N/A,,,,,,Starport Service
-Pioneer Supplies,Vocab,N/A,,,,,,Starport Service
-Colonel,Vocab,上校,,,,,,Military Ranks
+Outfitting,Vocab,舾装,3308/3/3,AloneKnight,,,,Starport-Service
+Ship Yard,Vocab,造船厂,3308/3/3,AloneKnight,,,,Starport-Service
+Tech Broker,Vocab,技术经纪人,3308/3/3,AloneKnight,,,,Starport-Service
+Promium Relay,Vocab,N/A,,,,,,Starport-Service
+Pioneer Supplies,Vocab,N/A,,,,,,Starport-Service
+Colonel,Vocab,上校,,,,,,Military-Ranks
 Captain,Vocab,上尉,,,"因Milo Castile在ACT期间军职为Captain，后于3308-4-12的新闻中使用Major军衔，因此断定为海军陆战队。
-海军陆战队参考链接：https://www.wikiwand.com/zh-sg/美国海军陆战队",,,Military Ranks
-Major,Vocab,少校,,,,,,Military Ranks
+海军陆战队参考链接：https://www.wikiwand.com/zh-sg/美国海军陆战队",,,Military-Ranks
+Major,Vocab,少校,,,,,,Military-Ranks
 AEGIS,Organization,宙斯盾;（有时不翻译）,,,,,,Organization;Thargoid;Anti-Thargoid
 Colonia Bridge,Vocab,Colonia大桥,,,,,,Starport
 Decals,Vocab,贴花,,,,,,Ship
 Faction,Vocab,派系,,,,,,
+Thargoid,Vocab,塔族,,,GALNET译制组的习惯是不翻译这个词；中文社区对其的外号是“八角”,,,
 Far God,Vocab,远神教,,,,,,Organization;Thargoid;Pro-Thargoid
-Heat sink,Vocab,散热片,,,,,,Ship Module
+Heat sink,Vocab,散热片,,,,,,Ship-Module
 *Pilots' Federation ALERT*,Vocab,*飞行员联盟警告*,,,,,,
 Paintjob,Vocab,涂装,,,,,,Ship
 Salvation,Vocab,救赎,,,,,Salvation,Human;Thargoid;Anti-Thargoid
@@ -195,10 +196,9 @@ Sirius Corporation,Vocab,天狼星集团,3308/3/18,JHLSunny,,Li YongRui,,Organization
 services,Vocab,服务部门;行政机构;警察服务,,JHLSunny,"注1：看上下文使用
 注2：该词条针对类似“Federal Security Services”及“Gliese 868 Services”的翻译规范，Services在此为政府部门（提供某一服务的部门）",,,
 Taurus Mining Ventures,Vocab,金牛座矿业投资公司,,,,,,Organization
-Tourist Beacon,Vocab,旅行信标,,,,,,Independent Non-Dockable Structure
+Tourist Beacon,Vocab,旅行信标,,,,,,Non-Dockable-Structure
 Federal Free Press,Vocab,《联邦自由报》,3308/2/22,,,Federation,,Press
 Sol Today,Vocab,《今日太阳系》,3308/2/22,,,Federation,,Press
 The Federal Times,Vocab,《联邦时代》,3308/2/22,,,Federation,,Press
 The Empirical,Vocab,《实证》,3308/3/23,,,,,Press
 The Alliance Tribune,Vocab,《联盟论坛报》,3308/3/18,JHLSunny,,Alliance,,Press
-,,,,,,,,

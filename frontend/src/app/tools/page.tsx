@@ -16,6 +16,17 @@ interface Section {
   tools: ToolEntry[];
 }
 
+// tags as constants, to prevent misspellings.
+const tag_ax: string = "anti-xeno"
+const tag_bgs: string = "BGS"
+const tag_col: string = "colonization"
+const tag_combat: string = "combat"
+const tag_explore: string = "exploration"
+const tag_mining: string = "mining"
+const tag_ship: string = "ship builds"
+const tag_trade: string = "trade"
+const tag_pp: string = "powerplay"
+
 const sections: Section[] = [
   {
     id: "databases",
@@ -35,7 +46,23 @@ const sections: Section[] = [
         description:
           "Galactic mapping project with exploration data, celestial body search, and flight logs.",
         link: "https://www.edsm.net/",
-        tags: ["exploration"],
+        tags: [tag_explore],
+      },
+      {
+        name: "Elite:Dangerous Astrometrics",
+        category: "Community",
+        description:
+          "Elite: Dangerous Astrometrics is a website devoted to providing maps, graphs, charts, and data extracted from the Elite: Dangerous game.",
+        link: "https://edastro.com/",
+        tags: [tag_explore],
+      },
+      {
+        name: "Elite:Dangerous Codex",
+        category: "Community",
+        description:
+          "Providing a complete overview of all available third party tools, interesting threads, community websites/wikis and videos.",
+        link: "https://edastro.com/",
+        tags: [],
       },
       {
         name: "Spansh",
@@ -43,7 +70,7 @@ const sections: Section[] = [
         description:
           "Route plotting, trade data, neutron highway planner, and fleet carrier analytics.",
         link: "https://www.spansh.co.uk/",
-        tags: ["exploration"],
+        tags: [tag_explore],
       },
     ],
   },
@@ -57,7 +84,23 @@ const sections: Section[] = [
         description:
           "Ship build planner — experiment with loadouts, compare stats, and share configurations.",
         link: "https://coriolis.io/",
-        tags: ["combat"],
+        tags: [tag_ship],
+      },
+      {
+        name: "ED Merit Miner",
+        category: "Community",
+        description:
+          "A tool to help you find the best prices for mining & earning merits for your powerplay faction.",
+        link: "https://meritminer.cc/",
+        tags: [tag_mining, tag_pp],
+      },
+      {
+        name: "EDMining",
+        category: "Community",
+        description:
+          "An updated guide and location resource for mining in Elite Dangerous.",
+        link: "https://edmining.com/",
+        tags: [tag_mining],
       },
       {
         name: "EDSY",
@@ -65,7 +108,39 @@ const sections: Section[] = [
         description:
           "Detailed ship builder with in-depth engineering calculations, heat modeling, and power analysis.",
         link: "https://edsy.org/",
-        tags: ["combat"],
+        tags: [tag_combat],
+      },
+      {
+        name: "Elite BGS",
+        category: "Community",
+        description:
+          "Detailed ship builder with in-depth engineering calculations, heat modeling, and power analysis.",
+        link: "https://elitebgs.app/",
+        tags: [tag_bgs],
+      },
+      {
+        name: "Elite:Dangerous Tools Collection",
+        category: "Community",
+        description:
+          "A collection of tools and guides for: mining, distance calculation, road to riches, massacre.",
+        link: "https://edsy.org/",
+        tags: [tag_combat,tag_mining,tag_trade],
+      },
+      {
+        name: "MetaElite",
+        category: "Community",
+        description:
+          "MetaElite is a role playing environment that allows the ED community to create interactive story telling for the community, closely integrated into your ED gameplay.",
+        link: "https://raxxla.org/",
+        tags: [tag_explore],
+      },
+      {
+        name: "Powerplay Assistant",
+        category: "Community",
+        description:
+          "A web app to help CMDRs with Powerplay 2.0 activities.",
+        link: "https://elite.niceygy.net/",
+        tags: [tag_pp],
       },
       {
         name: "Raven Colonial",
@@ -73,14 +148,39 @@ const sections: Section[] = [
         description:
           "Fleet carrier jump planner and coordination tool for carrier owners and hitchhikers.",
         link: "https://ravencolonial.com",
-        tags: ["colonization"],
+        tags: [tag_col],
+      },
+      {
+        name: "Wanderer's Toolbox",
+        category: "Community",
+        description:
+          "",
+        link: "https://wanderer-toolbox.com/",
+        tags: [],
       },
     ],
   },
   {
     id: "guides",
     title: "Guides",
-    tools: [],
+    tools: [
+      {
+        name: "Anti-Xeno Wiki",
+        category: "Community",
+        description:
+          "The primary repository for the Anti-Xeno Initiative, here you will find tutorials, guides and detailed breakdowns of Thargoid Combat and Thargoids in Elite: Dangerous.",
+        link: "https://wiki.antixenoinitiative.com/en/home",
+        tags: [tag_ax],
+      },
+      {
+        name: "Sirius Corporation Covert Creations (SCCC)",
+        category: "Community",
+        description:
+          "Hosts a set of utilities. TO COMPLETE THIS DESCRIPTION.",
+        link: "https://siriuscorp.cc/",
+        tags: [tag_combat, tag_ship],
+      },
+    ],
   },
   {
     id: "forums",
@@ -112,26 +212,76 @@ const sections: Section[] = [
         category: "Community",
         description: "Exploration-focused subreddit — expedition logs, discovery screenshots, and route tips.",
         link: "https://www.reddit.com/r/eliteexplorers/",
-        tags: ["exploration"],
+        tags: [tag_explore],
       },
       {
         name: "r/EliteExobiology",
         category: "Community",
         description: "Exobiology and organic data — genus hunting strategies, value tables, and findings.",
         link: "https://www.reddit.com/r/EliteExobiology/",
-        tags: ["exploration"],
+        tags: [tag_explore],
       },
     ],
   },
   {
     id: "organizations",
     title: "Organizations",
-    tools: [],
+    tools: [
+      {
+        name: "Anti-Xeno Initiative (AXI)",
+        category: "Community",
+        description: "A player community dedicated to protecting humanity from the Thargoid threat.",
+        link: "https://antixenoinitiative.com/",
+        tags: [tag_combat,tag_ax],
+      },
+      {
+        name: "Fuel Rats",
+        category: "Community",
+        description: "A player-organized service for providing fuel to CMDRs that run out of fuel on accident, and thus stranded in space.",
+        link: "https://fuelrats.com/",
+        tags: [tag_explore],
+      },
+      {
+        name: "Hull Seals",
+        category: "Community",
+        description: "A player-organized service dedicated to Hull Repairs, Broken Canopy rescues, or SRV strandings.",
+        link: "https://hullseals.space/",
+        tags: [tag_explore],
+      },
+      {
+        name: "New Pilots Initiative",
+        category: "Community",
+        description: "A squadron that provides support infrastructure for newly qualified pilots, helping them to head out into the galaxy and develop into their chosen career.",
+        link: "https://newp.io/",
+        tags: [tag_ship],
+      },
+      {
+        name: "Pilots Trade Network(PTN)",
+        category: "Community",
+        description: "We Exist to Make You Rich.",
+        link: "https://pilotstradenetwork.com/",
+        tags: [tag_trade],
+      },
+    ],
   },
   {
     id: "lore",
     title: "Lore and Information Archive",
     tools: [
+      {
+        name: "Canonn Research",
+        category: "Community",
+        description: "An independent cooperative made up of thousands of Commanders committed to science and discovering the mysteries of the universe.",
+        link: "https://canonn.science",
+        tags: [tag_explore,"lore"],
+      },
+      {
+        name: "Élite Dangereuse",
+        category: "Community",
+        description: "The Élite Dangereuse offers interactive narrative adventures in the heart of the galaxy.",
+        link: "https://elitedangereuse.com/en/index.php",
+        tags: [tag_explore],
+      },
       {
         name: "Elite Dangerous Wiki",
         category: "Official",
@@ -145,14 +295,40 @@ const sections: Section[] = [
         description:
           "Real-time data relay network — trade prices, star system scans, and outfitting data used by tools like INARA and EDSM.",
         link: "https://eddn.edcd.io/",
-        tags: ["exploration"],
+        tags: [tag_explore],
       },
       {
         name: "edGGG",
         category: "Community",
         description: "CMDR Arcanic's comprehensive catalog for the game's rarest wonders - the Green Gas Giants.",
         link: "https://ed-ggg.github.io/edggg/",
-        tags: ["exploration"],
+        tags: [tag_explore],
+      },
+    ],
+  },
+  {
+    id: "music",
+    title: "Music Albums & Composers for Elite",
+    tools: [
+      {
+        name: "ToCoSo",
+        category: "Community",
+        description: "CMDR ToCoSo's songs, inspired by Elite Dangerous.",
+        link: "https://tocoso.bandcamp.com/",
+        tags: [],
+      },
+    ],
+  },
+  {
+    id: "others",
+    title: "Other Websites, for Fun Only",
+    tools: [
+      {
+        name: "Park My Spaceship",
+        category: "Community",
+        description: "A 3rd party website, that allows one to place a spaceship (from many games and fictions) in a real place on Earth. The website has the anaconda available.",
+        link: "https://parkmyspaceship.com",
+        tags: [],
       },
     ],
   },

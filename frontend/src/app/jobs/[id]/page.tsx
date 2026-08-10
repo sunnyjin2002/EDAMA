@@ -39,9 +39,37 @@ export default async function JobDetailPage({ params }: { params: Promise<{ id: 
 
       {job.translated_body && (
         <div className="bg-ed-panel border border-ed-border rounded-lg p-4 mb-6">
-          <h2 className="text-sm font-semibold text-gray-400 uppercase mb-3">Translation</h2>
+          <h2 className="text-sm font-semibold text-gray-400 uppercase mb-3">First-Pass Translation</h2>
           <h3 className="text-white font-medium mb-2">{job.translated_title}</h3>
           <p className="text-gray-300 text-sm whitespace-pre-wrap">{job.translated_body}</p>
+        </div>
+      )}
+
+      {job.reviewed_body && (
+        <div className="bg-ed-panel border border-ed-orange/30 rounded-lg p-4 mb-6">
+          <div className="flex items-center gap-3 mb-3">
+            <h2 className="text-sm font-semibold text-ed-orange uppercase">Reviewed Translation</h2>
+            {job.confidence_score != null && (
+              <span className="px-2 py-0.5 text-xs rounded bg-green-900/30 text-green-300 border border-green-700">
+                Score: {job.confidence_score.toFixed(2)}
+              </span>
+            )}
+          </div>
+          <h3 className="text-white font-medium mb-2">{job.reviewed_title || job.translated_title}</h3>
+          <p className="text-gray-300 text-sm whitespace-pre-wrap">{job.reviewed_body}</p>
+          {job.review_notes && (
+            <p className="text-gray-500 text-xs mt-3 border-t border-ed-border/30 pt-2">{job.review_notes}</p>
+          )}
+        </div>
+      )}
+
+      {job.tags && job.tags.length > 0 && (
+        <div className="flex flex-wrap gap-1.5 mb-6">
+          {job.tags.map((tag) => (
+            <span key={tag} className="inline-block px-2 py-1 text-xs rounded bg-ed-orange/10 text-ed-orange border border-ed-orange/30">
+              {tag}
+            </span>
+          ))}
         </div>
       )}
 

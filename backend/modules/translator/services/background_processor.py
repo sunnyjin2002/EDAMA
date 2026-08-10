@@ -13,6 +13,8 @@ from backend.core.config import get_settings
 from backend.db.models import Job, JobStatus
 from backend.db.session import SessionLocal
 from backend.modules.translator.services.translation_service import TranslationService
+from backend.modules.translator.services.review_service import ReviewService
+from backend.modules.translator.services.tagging_service import TaggingService
 
 logger = logging.getLogger(__name__)
 
@@ -29,6 +31,8 @@ class BackgroundProcessor:
 
     def __init__(self) -> None:
         self._translation = TranslationService()
+        self._review = ReviewService()
+        self._tagging = TaggingService()
         self._stop = False
 
     async def run_loop(self, poll_interval: float = 2.0) -> None:
@@ -81,6 +85,18 @@ class BackgroundProcessor:
                 except Exception:
                     logger.exception("Job #%d failed", jid)
                     db.rollback()
+                    continue
+
+                # Auto-review after successful translation
+                try:
+                    await self._review.review_translation(db, jid)
+                except Exception:
+                    logger.exception("Auto-review failed for job #%d", jid)
+                # Auto-tag after successful translation + review
+                try:
+                    await self._tagging.extract_tags(db, jid)
+                except Exception:
+                    logger.exception("Auto-tag failed for job #%d", jid)
 
     async def _drain_failed(self, timeout: int, max_retries: int) -> None:
         with SessionLocal() as db:
@@ -117,6 +133,17 @@ class BackgroundProcessor:
                 except Exception:
                     logger.exception("Job #%d retry failed", jid)
                     db.rollback()
+                    continue
+                # Auto-review after successful retry
+                try:
+                    await self._review.review_translation(db, jid)
+                except Exception:
+                    logger.exception("Auto-review failed for job #%d", jid)
+                # Auto-tag after successful retry + review
+                try:
+                    await self._tagging.extract_tags(db, jid)
+                except Exception:
+                    logger.exception("Auto-tag failed for job #%d", jid)
 
     @staticmethod
     def _timeout_stuck_jobs(db: Session, timeout_seconds: int) -> None:
