@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 
 from backend.api.schemas import (
     ArticleDetail,
+    ArticlePollResponse,
     ArticleSummary,
     JobSummary,
     ManualSubmissionError,
@@ -15,9 +16,11 @@ from backend.api.schemas import (
 )
 from backend.db.session import get_db
 from backend.modules.translator.services.ingestion_service import IngestionService
+from backend.modules.translator.services.news_polling_service import NewsPollingService
 
 router = APIRouter(prefix="/articles", tags=["articles"])
 ingestion_service = IngestionService()
+news_polling_service = NewsPollingService()
 
 
 @router.get("/manual/new")
@@ -61,6 +64,19 @@ def submit_manual_article(
         article=ArticleSummary.model_validate(result.article),
         job=JobSummary.model_validate(result.job),
         message=f"Article created. Job #{result.job.id} queued and will translate automatically.",
+    )
+
+
+@router.post("/poll", response_model=ArticlePollResponse)
+async def poll_articles() -> ArticlePollResponse:
+    """Manually trigger one official news polling and ingestion cycle."""
+    result = await news_polling_service.poll_once()
+    return ArticlePollResponse(
+        fetched=result.fetched,
+        created=result.created,
+        skipped=result.skipped,
+        failed=result.failed,
+        errors=list(result.errors),
     )
 
 

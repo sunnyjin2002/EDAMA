@@ -18,6 +18,12 @@ Guidelines:
   Print them as-is followed by "星系".
   Example: "HIP 22460 system" -> "HIP 22460 星系"
 
+- System names that do have an apparent meaning (e.g. "Colonia",
+  "Summerland", "Shinrarta Dezhra") should be translated, then
+  follow the translated term with the English original in parentheses,
+  then followed by "星系".
+  Example: "The Summerland system" -> "夏地星系"
+
 Your response format:
 - First line: the translated title
 - Blank line

@@ -42,7 +42,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
 
     scheduler = create_scheduler(settings)
     app.state.scheduler = scheduler
-    scheduler.start(paused=True)
+    scheduler.start()
     # Start background job processor (picks up queued/failed jobs)
     bg_task = asyncio.create_task(background_processor.run_loop())
     try:

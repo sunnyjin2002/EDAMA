@@ -27,6 +27,7 @@ export interface JobDetail extends JobSummary {
   reviewed_body: string | null;
   review_notes: string | null;
   confidence_score: number | null;
+  tags: string[];
 }
 
 export interface DashboardResponse {
@@ -107,7 +108,7 @@ export async function getArticle(id: number): Promise<ArticleDetail> {
   return fetchJSON<ArticleDetail>(`/articles/${id}`);
 }
 
-export async function getSettings(): Promise<{ status: string }> {
+export async function getSettings(): Promise<SettingsResponse> {
   return fetchJSON<SettingsResponse>("/settings");
 }
 
@@ -117,9 +118,11 @@ export interface SettingsResponse {
   review_provider: string;
   review_model: string;
   tagging_provider: string;
-    tagging_model: string;
-    translation_review_enabled: boolean;
-    source_poll_url: string | null;
+  tagging_model: string;
+  translation_review_enabled: boolean;
+  news_source_type: string;
+  news_polling_enabled: boolean;
+  source_poll_url: string | null;
   source_poll_interval_minutes: number;
   auto_publish_official_news: boolean;
 }

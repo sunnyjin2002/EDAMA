@@ -192,6 +192,8 @@ class SettingsResponse(BaseModel):
     tagging_provider: str
     tagging_model: str
     translation_review_enabled: bool
+    news_source_type: str
+    news_polling_enabled: bool
     source_poll_url: str | None
     source_poll_interval_minutes: int
     auto_publish_official_news: bool
@@ -205,6 +207,18 @@ class SettingsUpdateRequest(BaseModel):
     tagging_provider: str | None = None
     tagging_model: str | None = None
     translation_review_enabled: bool | None = None
+    news_source_type: str | None = None
+    news_polling_enabled: bool | None = None
     source_poll_url: str | None = None
     source_poll_interval_minutes: int | None = None
     auto_publish_official_news: bool | None = None
+
+
+class ArticlePollResponse(BaseModel):
+    """Summary returned after a manual news polling cycle."""
+
+    fetched: int
+    created: int
+    skipped: int
+    failed: int
+    errors: list[str]

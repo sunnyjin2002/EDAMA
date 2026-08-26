@@ -7,6 +7,10 @@ from typing import Any
 from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+_PROJECT_ROOT = Path(__file__).resolve().parents[2]
+_DEFAULT_DATABASE_URL = f"sqlite:///{(_PROJECT_ROOT / 'data' / 'app.db').as_posix()}"
+_DEFAULT_ENV_FILE = _PROJECT_ROOT / ".env"
+
 
 class Settings(BaseSettings):
     """Runtime settings for the local MVP application."""
@@ -14,7 +18,7 @@ class Settings(BaseSettings):
     app_name: str = "Elite Dangerous Translator"
     debug: bool = False
     log_level: str = "INFO"
-    database_url: str = "sqlite:///./data/app.db"
+    database_url: str = _DEFAULT_DATABASE_URL
 
     openai_api_key: str | None = None
     gemini_api_key: str | None = None
@@ -42,8 +46,10 @@ class Settings(BaseSettings):
     smtp_password: str | None = None
 
     source_poll_url: str | None = None
-    source_poll_interval_minutes: int = Field(default=30, ge=1)
+    source_poll_interval_minutes: int = Field(default=120, ge=1)
     auto_publish_official_news: bool = False
+    news_source_type: str = "community"
+    news_polling_enabled: bool = True
 
     @field_validator("debug", mode="before")
     @classmethod
@@ -58,7 +64,7 @@ class Settings(BaseSettings):
         return value
 
     model_config = SettingsConfigDict(
-        env_file=".env",
+        env_file=_DEFAULT_ENV_FILE,
         env_file_encoding="utf-8",
         extra="ignore",
     )
@@ -67,5 +73,5 @@ class Settings(BaseSettings):
 @lru_cache
 def get_settings() -> Settings:
     """Return cached application settings."""
-    Path("data").mkdir(parents=True, exist_ok=True)
+    (_PROJECT_ROOT / "data").mkdir(parents=True, exist_ok=True)
     return Settings()

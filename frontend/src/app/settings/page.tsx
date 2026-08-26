@@ -4,10 +4,10 @@ import { getSettings, updateSettings, type SettingsResponse } from "@/lib/api";
 import { useEffect, useState } from "react";
 
 const PROVIDERS = ["openai", "deepseek", "gemini", "qwen", "anthropic"] as const;
+const NEWS_SOURCES = ["community", "api"] as const;
 
 const PROVIDER_MODELS: Record<string, string[]> = {
   openai: ["gpt-4o-mini", "gpt-4o", "gpt-4.1"],
-  deepseek: ["deepseek-chat", "deepseek-reasoner"],
   deepseek: ["deepseek-v4-flash", "deepseek-v4-pro"],
   gemini: ["gemini-2.5-flash", "gemini-2.5-pro"],
   qwen: ["qwen-max", "qwen-plus", "qwen-turbo"],
@@ -21,7 +21,7 @@ function getModels(provider: string): string[] {
 interface SelectFieldProps {
   label: string;
   value: string;
-  options: string[];
+  options: readonly string[];
   onChange: (v: string) => void;
 }
 
@@ -92,6 +92,14 @@ export default function SettingsPage() {
         {/* Polling section — bring back InputField inline since it was removed */}
         <section className="bg-ed-panel border border-ed-border rounded-lg p-4">
           <h2 className="text-sm font-semibold text-gray-400 uppercase mb-3">Source Polling</h2>
+          <div className="mb-4">
+            <SelectField
+              label="News Source Type"
+              value={settings.news_source_type}
+              options={NEWS_SOURCES}
+              onChange={(v) => set("news_source_type", v)}
+            />
+          </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm text-gray-400 mb-1">Source Poll URL</label>
@@ -107,10 +115,21 @@ export default function SettingsPage() {
               <input
                 type="text"
                 value={String(settings.source_poll_interval_minutes)}
-                onChange={(e) => set("source_poll_interval_minutes", Number(e.target.value) || 30)}
+                onChange={(e) => set("source_poll_interval_minutes", Number(e.target.value) || 120)}
                 className="w-full px-3 py-2 bg-ed-panel border border-ed-border rounded text-white text-sm focus:outline-none focus:border-ed-orange"
               />
             </div>
+          </div>
+          <div className="mt-3">
+            <label className="flex items-center gap-2 text-sm text-gray-400">
+              <input
+                type="checkbox"
+                checked={settings.news_polling_enabled}
+                onChange={(e) => set("news_polling_enabled", e.target.checked)}
+                className="rounded bg-ed-panel border-ed-border"
+              />
+              Automatic Galnet Polling
+            </label>
           </div>
           <div className="mt-3">
             <label className="flex items-center gap-2 text-sm text-gray-400">

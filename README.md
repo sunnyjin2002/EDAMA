@@ -1,4 +1,4 @@
-# EDAMA — Elite:Dangerous Ask Me Anything
+# EDAMA — Elite:Dangerous Ask Me Anything Chatbot
 
 Elite Dangerous lore translation and knowledge system.
 Translate Galnet articles from EN to CN, manage terminology

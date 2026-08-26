@@ -11,7 +11,8 @@ from backend.core.config import get_settings
 
 router = APIRouter(prefix="/settings", tags=["settings"])
 
-ENV_PATH = Path(".env")  # resolved relative to CWD (repo root)
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+ENV_PATH = PROJECT_ROOT / ".env"
 
 
 def _env_key(field: str) -> str:
@@ -66,6 +67,8 @@ def _build_response() -> SettingsResponse:
         tagging_provider=s.tagging_provider,
         tagging_model=s.tagging_model,
         translation_review_enabled=s.translation_review_enabled,
+        news_source_type=s.news_source_type,
+        news_polling_enabled=s.news_polling_enabled,
         source_poll_url=s.source_poll_url,
         source_poll_interval_minutes=s.source_poll_interval_minutes,
         auto_publish_official_news=s.auto_publish_official_news,
@@ -93,10 +96,8 @@ def update_settings(body: SettingsUpdateRequest) -> SettingsResponse:
         "tagging_provider",
         "tagging_model",
         "translation_review_enabled",
-        "source_poll_url",
-        "source_poll_interval_minutes",
-        "auto_publish_official_news",
-        "translation_review_enabled",
+        "news_source_type",
+        "news_polling_enabled",
         "source_poll_url",
         "source_poll_interval_minutes",
         "auto_publish_official_news",

@@ -1,41 +1,17 @@
-import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
+"use client";
 
-export const dynamic = "force-dynamic";
+import { useActionState } from "react";
+import { submitArticle, type ManualSubmissionState } from "./actions";
 
-async function submitArticle(formData: FormData) {
-  "use server";
-  const title = formData.get("title") as string;
-  const source_url = formData.get("source_url") as string;
-  const source_text = formData.get("source_text") as string;
-  const target_language = (formData.get("target_language") as string) || "zh-CN";
-
-  if (!source_text) {
-    return { error: "Source text is required." };
-  }
-
-  const res = await fetch("http://localhost:3312/articles/manual", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ title: title || null, source_url: source_url || null, source_text, target_language }),
-  });
-
-  if (!res.ok) {
-    const detail = await res.text();
-    return { error: detail };
-  }
-
-  const data = await res.json();
-  revalidatePath("/");
-  revalidatePath("/jobs");
-  redirect(`/jobs/${data.job.id}`);
-}
+const initialState: ManualSubmissionState = {};
 
 export default function ManualSubmitPage() {
+  const [state, formAction, isPending] = useActionState(submitArticle, initialState);
+
   return (
     <div>
       <h1 className="text-2xl font-bold text-white mb-4">Manual Lore Submission</h1>
-      <form action={submitArticle} className="max-w-2xl space-y-4">
+      <form action={formAction} className="max-w-2xl space-y-4">
         <div>
           <label className="block text-sm text-gray-400 mb-1">Title</label>
           <input
@@ -70,11 +46,15 @@ export default function ManualSubmitPage() {
             className="w-32 px-3 py-2 bg-ed-panel border border-ed-border rounded text-white text-sm focus:outline-none focus:border-ed-orange"
           />
         </div>
+
+        {state.error && <p className="text-sm text-red-400">{state.error}</p>}
+
         <button
           type="submit"
-          className="px-5 py-2 bg-ed-orange text-white rounded text-sm font-medium hover:bg-orange-600 transition-colors"
+          disabled={isPending}
+          className="px-5 py-2 bg-ed-orange text-white rounded text-sm font-medium hover:bg-orange-600 disabled:opacity-50 transition-colors"
         >
-          Submit
+          {isPending ? "Submitting..." : "Submit"}
         </button>
       </form>
     </div>
