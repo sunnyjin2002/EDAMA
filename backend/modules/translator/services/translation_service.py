@@ -103,12 +103,31 @@ class TranslationService:
             raise ValueError(f"No API key configured for provider '{provider}'")
 
         client = create_client(provider, api_key)
-        response = await client.generate(
-            system_prompt, user_prompt,
-            model=model or "gpt-4o-mini",
-            temperature=0.3,
-            max_tokens=4096,
-        )
+        response = None
+        fallback_used = False
+        for prompt_text in (self._build_minimal_user_prompt(source), user_prompt):
+            response = await client.generate(
+                system_prompt, prompt_text,
+                model=model or "gpt-4o-mini",
+                temperature=0.3,
+                max_tokens=16384,
+            )
+            if response.text.strip():
+                break
+            self.job_service.add_log(
+                db, job, "translate_empty_response",
+                "LLM returned an empty response; retrying without context.",
+            )
+            fallback_used = True
+
+        if response is None or not response.text.strip():
+            raise ValueError("LLM returned an empty translation response")
+
+        if fallback_used:
+            self.job_service.add_log(
+                db, job, "translate_fallback",
+                "Used simplified prompt after an empty contextual response.",
+            )
 
         # Parse response — extract title and body
         translated_title, translated_body = self._parse_translation_response(
@@ -158,6 +177,10 @@ class TranslationService:
 
         parts.append(f"Source text:\n{source}")
         return "\n\n".join(parts)
+
+    def _build_minimal_user_prompt(self, source: str) -> str:
+        """Build a source-only prompt used when context causes an empty response."""
+        return f"Source text:\n{source}"
 
     @staticmethod
     def _parse_translation_response(

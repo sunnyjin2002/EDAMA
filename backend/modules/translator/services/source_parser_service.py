@@ -1,10 +1,4 @@
-"""News source clients — abstract interface + HTML scraper implementation.
-
-The :class:`NewsSourceClient` interface lets us swap the underlying data
-source without touching the polling/ingestion layer.  Currently only the
-community-site HTML scraper is implemented; a JSON API client can be added
-later by implementing the same interface.
-"""
+"""News source clients - API first, community scraper fallback."""
 
 from __future__ import annotations
 
@@ -18,21 +12,19 @@ from bs4 import BeautifulSoup
 
 @dataclass(frozen=True)
 class NewsArticle:
-    """Normalised article returned by any news source client."""
+    """Normalised article returned by a news source."""
 
     uid: str
     title: str
     url: str
     body: str
     published_at: datetime | None
+    source_type: str = "galnet"
+    legacy_uid: str | None = None
 
 
 class NewsSourceClient(ABC):
-    """Abstract interface for fetching Galnet-style news articles.
-
-    Implementations must return a list of :class:`NewsArticle` where each
-    item has a stable ``uid`` used for deduplication against the database.
-    """
+    """Abstract interface for fetching Galnet or Community Goal articles."""
 
     @abstractmethod
     async def fetch_articles(self) -> list[NewsArticle]:
@@ -40,6 +32,24 @@ class NewsSourceClient(ABC):
 
     async def aclose(self) -> None:
         """Close resources held by the client, if any."""
+
+
+def parse_elite_date(raw: str | None) -> datetime | None:
+    """Parse an Elite-style or ISO date into a naive UTC datetime."""
+    if not raw:
+        return None
+    value = raw.strip()
+    if value.endswith("Z"):
+        value = value[:-1] + "+00:00"
+    for fmt in ("%d %b %Y", "%Y-%m-%dT%H:%M:%S%z", "%Y-%m-%d %H:%M:%S", "%Y-%m-%d"):
+        try:
+            parsed = datetime.strptime(value, fmt)
+            if parsed.tzinfo is not None:
+                parsed = parsed.replace(tzinfo=None)
+            return parsed
+        except ValueError:
+            continue
+    return None
 
 
 class CommunitySiteClient(NewsSourceClient):
@@ -72,6 +82,8 @@ class CommunitySiteClient(NewsSourceClient):
                     url=url,
                     body=body,
                     published_at=published_at,
+                    source_type="galnet",
+                    legacy_uid=uid,
                 )
             )
         return articles
@@ -117,16 +129,122 @@ class CommunitySiteClient(NewsSourceClient):
         date_tag = soup.select_one("div.article p.small")
         if date_tag is not None:
             raw = date_tag.get_text(strip=True)
-            try:
-                published_at = datetime.strptime(raw, "%d %b %Y")
-            except ValueError:
-                published_at = None
+            published_at = parse_elite_date(raw)
         return body, published_at
+
+
+class GalnetApiClient(NewsSourceClient):
+    """Reads Galnet articles from the JSON:API endpoint."""
+
+    base_url = "https://cms.zaonce.net/en-GB/jsonapi/node/galnet_article"
+
+    def __init__(self, client: httpx.AsyncClient | None = None) -> None:
+        self._owns_client = client is None
+        self._client = client or httpx.AsyncClient(
+            timeout=30,
+            follow_redirects=True,
+            headers={"User-Agent": "Mozilla/5.0 (compatible; EDAMA/0.1)", "Accept": "application/vnd.api+json"},
+        )
+
+    async def fetch_articles(self) -> list[NewsArticle]:
+        """Fetch the latest Galnet JSON:API page and normalize it."""
+        data = await self._get_json(self.base_url)
+        articles: list[NewsArticle] = []
+        for item in data.get("data", []):
+            attrs = item.get("attributes", {})
+            uid = attrs.get("field_galnet_guid") or item.get("id")
+            title = attrs.get("title") or "Untitled GalNet Article"
+            body_value = attrs.get("body") or {}
+            body = body_value.get("value") or body_value.get("processed") or ""
+            url = (
+                item.get("links", {}).get("self", {}).get("href")
+                or f"{self.base_url}/{item.get('id')}"
+            )
+            published_at = parse_elite_date(attrs.get("field_galnet_date")) or parse_elite_date(attrs.get("published_at"))
+            articles.append(
+                NewsArticle(
+                    uid=uid,
+                    title=title,
+                    url=url,
+                    body=body,
+                    published_at=published_at,
+                    source_type="galnet",
+                )
+            )
+        return articles
+
+    async def _get_json(self, url: str) -> dict:
+        response = await self._client.get(url)
+        response.raise_for_status()
+        return response.json()
+
+    async def aclose(self) -> None:
+        if self._owns_client:
+            await self._client.aclose()
+
+
+class CommunityGoalClient(NewsSourceClient):
+    """Reads Community Goal initiatives from the Orerve API."""
+
+    base_url = "https://api.orerve.net/2.0/website/initiatives/list?lang=en"
+
+    def __init__(self, client: httpx.AsyncClient | None = None) -> None:
+        self._owns_client = client is None
+        self._client = client or httpx.AsyncClient(
+            timeout=30,
+            follow_redirects=True,
+            headers={"User-Agent": "Mozilla/5.0 (compatible; EDAMA/0.1)", "Accept": "application/json"},
+        )
+
+    async def fetch_articles(self) -> list[NewsArticle]:
+        """Fetch active Community Goals and normalize them defensively."""
+        data = await self._get_json(self.base_url)
+        active = data.get("activeInitiatives") or []
+        articles: list[NewsArticle] = []
+        for item in active:
+            if not isinstance(item, dict):
+                continue
+            uid = (
+                item.get("id")
+                or item.get("initiativeId")
+                or item.get("guid")
+                or item.get("url")
+            )
+            title = item.get("title") or item.get("name") or "Community Goal"
+            body = item.get("description") or item.get("summary") or ""
+            url = item.get("url") or item.get("link") or self.base_url
+            date_raw = item.get("endDate") or item.get("startDate") or item.get("date")
+            published_at = parse_elite_date(str(date_raw) if date_raw else None)
+            if not uid:
+                uid = f"cg-{title}"
+            articles.append(
+                NewsArticle(
+                    uid=str(uid),
+                    title=title,
+                    url=url,
+                    body=body,
+                    published_at=published_at,
+                    source_type="community_goal",
+                )
+            )
+        return articles
+
+    async def _get_json(self, url: str) -> dict:
+        response = await self._client.get(url)
+        response.raise_for_status()
+        return response.json()
+
+    async def aclose(self) -> None:
+        if self._owns_client:
+            await self._client.aclose()
 
 
 def create_news_client(source_type: str) -> NewsSourceClient:
     """Return a news source client for the configured source type."""
+    if source_type == "galnet_api":
+        return GalnetApiClient()
     if source_type == "community":
         return CommunitySiteClient()
-    # Future: add "api" source type with a JSON API client.
+    if source_type == "community_goal":
+        return CommunityGoalClient()
     raise ValueError(f"Unknown news source type: {source_type}")

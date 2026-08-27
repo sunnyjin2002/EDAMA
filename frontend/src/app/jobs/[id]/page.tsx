@@ -29,7 +29,7 @@ export default async function JobDetailPage({ params }: { params: Promise<{ id: 
         {job.article && (
           <div className="bg-ed-panel border border-ed-border rounded-lg p-4 min-w-0">
             <h2 className="text-sm font-semibold text-gray-400 uppercase mb-2">Article</h2>
-            <Link href={`/articles/${job.article_id}`} className="text-ed-orange hover:underline text-sm block truncate">
+            <Link href={`/articles/${job.article?.slug || job.article_id}`} className="text-ed-orange hover:underline text-sm block truncate">
               {job.article.source_title}
             </Link>
             <p className="text-gray-500 text-xs mt-1">Type: {job.article.source_type}</p>

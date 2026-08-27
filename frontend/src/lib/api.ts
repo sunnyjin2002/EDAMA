@@ -16,7 +16,13 @@ export interface JobSummary {
   target_language: string;
   error_message: string | null;
   created_at: string;
-  article: { id: number; source_title: string; source_type: string } | null;
+  article: {
+    id: number;
+    slug: string | null;
+    article_header: string | null;
+    source_title: string;
+    source_type: string;
+  } | null;
 }
 
 export interface JobDetail extends JobSummary {
@@ -35,14 +41,43 @@ export interface DashboardResponse {
   recent_jobs: JobSummary[];
 }
 
+export interface ArticleTranslation {
+  language: string;
+  translated_title: string | null;
+  translated_body: string | null;
+  reviewed_title: string | null;
+  reviewed_body: string | null;
+  review_notes: string | null;
+  confidence_score: number | null;
+}
+
 export interface ArticleDetail {
   id: number;
+  slug: string | null;
+  article_header: string | null;
   source_type: string;
   source_url: string | null;
   source_title: string;
   source_body: string;
+  published_at_source: string | null;
   created_at: string;
   jobs: JobDetail[];
+  translations: ArticleTranslation[];
+}
+
+export interface ArticleArchiveItem {
+  id: number;
+  slug: string | null;
+  article_header: string | null;
+  source_type: string;
+  source_url: string | null;
+  source_title: string;
+  published_at_source: string | null;
+}
+
+export interface ArticleListResponse {
+  articles: ArticleArchiveItem[];
+  type: string;
 }
 
 export interface GlossaryEntry {
@@ -104,8 +139,13 @@ export async function getTranslationMemory(query?: string): Promise<TranslationM
   return fetchJSON<TranslationMemoryListResponse>(`/translation-memory${qs}`);
 }
 
-export async function getArticle(id: number): Promise<ArticleDetail> {
-  return fetchJSON<ArticleDetail>(`/articles/${id}`);
+export async function getArticle(identifier: string): Promise<ArticleDetail> {
+  return fetchJSON<ArticleDetail>(`/articles/${encodeURIComponent(identifier)}`);
+}
+
+export async function getArticles(type?: string): Promise<ArticleListResponse> {
+  const qs = type ? `?type=${encodeURIComponent(type)}` : "";
+  return fetchJSON<ArticleListResponse>(`/articles${qs}`);
 }
 
 export async function getSettings(): Promise<SettingsResponse> {

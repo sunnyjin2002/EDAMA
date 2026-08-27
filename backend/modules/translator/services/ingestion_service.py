@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from sqlalchemy import select
 from sqlalchemy.orm import Session, selectinload
 
-from backend.db.models import Article, Job, SourceType
+from backend.db.models import Article, Job, SourceType, Translation
 from .job_service import JobService
 
 
@@ -106,6 +106,59 @@ class IngestionService:
         db.refresh(job)
         return ManualSubmissionResult(article=article, job=job)
 
+    def list_articles(
+        self,
+        db: Session,
+        source_type: str | None = None,
+        limit: int = 200,
+    ) -> list[Article]:
+        """Return articles newest-first, optionally filtered by source type."""
+        statement = select(Article).order_by(
+            Article.published_at_source.desc().nulls_last(),
+            Article.id.desc(),
+        ).limit(limit)
+        if source_type:
+            statement = statement.where(Article.source_type == SourceType(source_type))
+        return list(db.scalars(statement))
+
+    def get_article_by_identifier(self, db: Session, identifier: str) -> Article | None:
+        """Return one article by numeric id or public slug."""
+        if identifier.isdigit():
+            return self.get_article(db, int(identifier))
+        statement = (
+            select(Article)
+            .where(Article.slug == identifier)
+            .options(
+                selectinload(Article.jobs).selectinload(Job.logs),
+                selectinload(Article.translations).selectinload(Translation.job),
+            )
+        )
+        return db.scalar(statement)
+
+    def get_translations_for_article(self, db: Session, article_id: int) -> list[dict]:
+        """Return one translation per target language for an article."""
+        statement = (
+            select(Translation)
+            .where(Translation.article_id == article_id)
+            .options(selectinload(Translation.job))
+            .order_by(Translation.id.desc())
+        )
+        grouped: dict[str, dict] = {}
+        for translation in db.scalars(statement):
+            language = getattr(translation.job, "target_language", "zh-CN") or "zh-CN"
+            if language in grouped:
+                continue
+            grouped[language] = {
+                "language": language,
+                "translated_title": translation.translated_title,
+                "translated_body": translation.translated_body,
+                "reviewed_title": translation.reviewed_title,
+                "reviewed_body": translation.reviewed_body,
+                "review_notes": translation.review_notes,
+                "confidence_score": translation.confidence_score,
+            }
+        return list(grouped.values())
+
     def get_article(self, db: Session, article_id: int) -> Article | None:
         """Return one article with related jobs and logs loaded."""
         statement = (
@@ -120,4 +173,4 @@ class IngestionService:
         first_line = source_text.splitlines()[0].strip() if source_text.splitlines() else ""
         if not first_line:
             return "Manual lore submission"
-        return first_line[:120]
+        return first_line[:500]

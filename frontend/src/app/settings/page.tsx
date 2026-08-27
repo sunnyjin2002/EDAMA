@@ -4,7 +4,7 @@ import { getSettings, updateSettings, type SettingsResponse } from "@/lib/api";
 import { useEffect, useState } from "react";
 
 const PROVIDERS = ["openai", "deepseek", "gemini", "qwen", "anthropic"] as const;
-const NEWS_SOURCES = ["community", "api"] as const;
+const NEWS_SOURCES = ["galnet_api", "community"] as const;
 
 const PROVIDER_MODELS: Record<string, string[]> = {
   openai: ["gpt-4o-mini", "gpt-4o", "gpt-4.1"],

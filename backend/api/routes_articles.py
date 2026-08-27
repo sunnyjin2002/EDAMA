@@ -6,9 +6,12 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from backend.api.schemas import (
+    ArticleArchiveItem,
     ArticleDetail,
+    ArticleListResponse,
     ArticlePollResponse,
     ArticleSummary,
+    ArticleTranslationDetail,
     JobSummary,
     ManualSubmissionError,
     ManualSubmissionRequest,
@@ -21,6 +24,21 @@ from backend.modules.translator.services.news_polling_service import NewsPolling
 router = APIRouter(prefix="/articles", tags=["articles"])
 ingestion_service = IngestionService()
 news_polling_service = NewsPollingService()
+
+
+@router.get("", response_model=ArticleListResponse)
+def list_articles(
+    db: Annotated[Session, Depends(get_db)],
+    type: str | None = None,
+) -> ArticleListResponse:
+    """Return the public article archive, newest first."""
+    source_type_map = {"galnet": "official_news", "community_goal": "community_goal"}
+    source_type = source_type_map.get(type or "") or (type or None)
+    articles = ingestion_service.list_articles(db, source_type=source_type)
+    return ArticleListResponse(
+        articles=[ArticleArchiveItem.model_validate(a) for a in articles],
+        type=type or "",
+    )
 
 
 @router.get("/manual/new")
@@ -80,13 +98,18 @@ async def poll_articles() -> ArticlePollResponse:
     )
 
 
-@router.get("/{article_id}", response_model=ArticleDetail)
+@router.get("/{identifier}", response_model=ArticleDetail)
 def article_detail(
-    article_id: int,
+    identifier: str,
     db: Annotated[Session, Depends(get_db)],
 ) -> ArticleDetail:
-    """Return article metadata, source text, and related jobs."""
-    article = ingestion_service.get_article(db, article_id)
+    """Return article metadata, source text, and language translations."""
+    article = ingestion_service.get_article_by_identifier(db, identifier)
     if article is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Article not found")
-    return ArticleDetail.model_validate(article)
+    detail = ArticleDetail.model_validate(article)
+    detail.translations = [
+        ArticleTranslationDetail(**item)
+        for item in ingestion_service.get_translations_for_article(db, article.id)
+    ]
+    return detail

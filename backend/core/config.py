@@ -34,7 +34,7 @@ class Settings(BaseSettings):
     tagging_model: str = "gpt-4o-mini"
 
     translation_review_enabled: bool = True
-    translation_timeout_seconds: int = 120
+    translation_timeout_seconds: int = 300
     translation_max_retries: int = 3
 
     wiki_username: str | None = None
@@ -48,7 +48,8 @@ class Settings(BaseSettings):
     source_poll_url: str | None = None
     source_poll_interval_minutes: int = Field(default=120, ge=1)
     auto_publish_official_news: bool = False
-    news_source_type: str = "community"
+    news_source_type: str = "galnet_api"
+    news_fallback_source_type: str = "community"
     news_polling_enabled: bool = True
 
     @field_validator("debug", mode="before")

@@ -5,7 +5,7 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Any
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 
 # ── Article schemas ────────────────────────────────────────────────
@@ -14,9 +14,12 @@ class ArticleSummary(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: int
+    slug: str | None
+    article_header: str | None
     source_type: str
     source_url: str | None
     source_title: str
+    published_at_source: datetime | None
     discovered_at: datetime | None
     created_at: datetime
 
@@ -68,10 +71,22 @@ class JobDetail(BaseModel):
     tags: list[str] = []
 
 
+class ArticleTranslationDetail(BaseModel):
+    language: str
+    translated_title: str | None
+    translated_body: str | None
+    reviewed_title: str | None
+    reviewed_body: str | None
+    review_notes: str | None
+    confidence_score: float | None
+
+
 class ArticleDetail(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: int
+    slug: str | None
+    article_header: str | None
     source_type: str
     source_url: str | None
     source_title: str
@@ -81,7 +96,28 @@ class ArticleDetail(BaseModel):
     created_at: datetime
     updated_at: datetime | None
     jobs: list[JobDetail] = []
+    translations: list[ArticleTranslationDetail] = Field(
+        default_factory=list,
+        validation_alias="article_translations",
+    )
 
+
+class ArticleArchiveItem(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    slug: str | None
+    article_header: str | None
+    source_type: str
+    source_url: str | None
+    source_title: str
+    published_at_source: datetime | None
+    discovered_at: datetime | None
+
+
+class ArticleListResponse(BaseModel):
+    articles: list[ArticleArchiveItem]
+    type: str = ""
 
 # ── Dashboard ──────────────────────────────────────────────────────
 

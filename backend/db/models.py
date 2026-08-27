@@ -21,6 +21,7 @@ class SourceType(StrEnum):
 
     official_news = "official_news"
     community = "community"
+    community_goal = "community_goal"
     manual = "manual"
     manual_lore = "manual_lore"
 
@@ -102,6 +103,10 @@ class Article(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     source_type: Mapped[SourceType] = mapped_column(source_type_enum)
+    source_uid: Mapped[str | None] = mapped_column(String(255), unique=True)
+    legacy_source_uid: Mapped[str | None] = mapped_column(String(255))
+    slug: Mapped[str | None] = mapped_column(String(255), unique=True)
+    article_header: Mapped[str | None] = mapped_column(String(500))
     source_url: Mapped[str | None] = mapped_column(String(1024))
     source_title: Mapped[str] = mapped_column(String(500))
     source_body: Mapped[str] = mapped_column(Text)
