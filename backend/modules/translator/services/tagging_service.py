@@ -35,6 +35,7 @@ class TaggingService:
 
         article = job.article
         self.job_service.add_log(db, job, "tag_start", "Beginning tag extraction.")
+        db.commit()
 
         source = f"{article.source_title}\n\n{article.source_body}"
 

@@ -64,6 +64,7 @@ class ReviewService:
             return None
 
         self.job_service.add_log(db, job, "review_start", "Beginning translation review.")
+        db.commit()
 
         source = f"Title: {job.article.source_title}\n\n{job.article.source_body}"
         first_pass = f"Title: {translation.translated_title or ''}\n\n{translation.translated_body or ''}"

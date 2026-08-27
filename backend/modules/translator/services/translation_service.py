@@ -86,6 +86,10 @@ class TranslationService:
                 f"{len(tm_passages)} similar TM passages retrieved",
             )
 
+        # Commit pre-LLM logs so the SQLite write transaction is not held
+        # open while waiting for the provider.
+        db.commit()
+
         # Call LLM
         settings = get_settings()
         provider = settings.translation_provider
